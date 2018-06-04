@@ -54,3 +54,7 @@ docs/_build
 /.hope/
 /.ipynb_checkpoints/
 /.settings/
+
+*.png
+*.jpg
+unet_trained

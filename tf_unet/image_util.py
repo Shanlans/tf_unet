@@ -69,9 +69,10 @@ class BaseDataProvider(object):
     
     def _process_data(self, data):
         # normalization
-        data = np.clip(np.fabs(data), self.a_min, self.a_max)
-        data -= np.amin(data)
-        data /= np.amax(data)
+#        data = np.clip(np.fabs(data), self.a_min, self.a_max)
+#        data -= np.amin(data)
+#        data /= np.amax(data)
+        data = (data - np.mean(data)) / np.std(data)
         return data
     
     def _post_process(self, data, labels):
