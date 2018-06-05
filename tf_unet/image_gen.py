@@ -29,7 +29,7 @@ class GrayScaleDataProvider(BaseDataProvider):
     n_class = 2
     
     def __init__(self, nx, ny, **kwargs):
-        super(GrayScaleDataProvider, self).__init__()
+        super(GrayScaleDataProvider, self).__init__() # Initialise father class
         self.nx = nx
         self.ny = ny
         self.kwargs = kwargs
@@ -58,25 +58,27 @@ class RgbDataProvider(BaseDataProvider):
         data, label = create_image_and_label(self.nx, self.ny, **self.kwargs)
         return to_rgb(data), label
 
-def create_image_and_label(nx,ny, cnt = 10, r_min = 5, r_max = 50, border = 92, sigma = 20, rectangles=False):
+def create_image_and_label(nx,ny, cnt = 10, r_min = 5, r_max = 50, border = 92, sigma = 20,v_min = 1, v_max = 255, rectangles=False):
     
     
     image = np.ones((nx, ny, 1))
     label = np.zeros((nx, ny, 3), dtype=np.bool)
     mask = np.zeros((nx, ny), dtype=np.bool)
+    '''
+    Automatically generate the 'cnt' number ovals    
+    '''
     for _ in range(cnt):
-        a = np.random.randint(border, nx-border)
-        b = np.random.randint(border, ny-border)
-        r = np.random.randint(r_min, r_max)
-        h = np.random.randint(1,255)
-
+        a = np.random.randint(border, nx-border) # range of Y
+        b = np.random.randint(border, ny-border) # range of X
+        r = np.random.randint(r_min, r_max)      # radius range of oval
+        h = np.random.randint(v_min,v_max)             # value of oval
+        
         y,x = np.ogrid[-a:nx-a, -b:ny-b]
-        m = x*x + y*y <= r*r
-        mask = np.logical_or(mask, m)
+        m = x*x + y*y <= r*r                     # X^2 + Y^2 = Z^2 oval
+        mask = np.logical_or(mask, m)            # or logical for mask generate 
+        image[m] = h                             # give value by oval 
 
-        image[m] = h
-
-    label[mask, 1] = 1
+    label[mask, 1] = 1                           # 
     
     if rectangles:
         mask = np.zeros((nx, ny), dtype=np.bool)
@@ -84,7 +86,7 @@ def create_image_and_label(nx,ny, cnt = 10, r_min = 5, r_max = 50, border = 92, 
             a = np.random.randint(nx)
             b = np.random.randint(ny)
             r =  np.random.randint(r_min, r_max)
-            h = np.random.randint(1,255)
+            h = np.random.randint(v_min,v_max)
     
             m = np.zeros((nx, ny), dtype=np.bool)
             m[a:a+r, b:b+r] = True
@@ -98,7 +100,6 @@ def create_image_and_label(nx,ny, cnt = 10, r_min = 5, r_max = 50, border = 92, 
     image += np.random.normal(scale=sigma, size=image.shape)
     image -= np.amin(image)
     image /= np.amax(image)
-    
     if rectangles:
         return image, label
     else:

@@ -39,12 +39,12 @@ class BaseDataProvider(object):
     n_class = 2
     
 
-    def __init__(self, a_min=None, a_max=None):
+    def __init__(self, a_min=None, a_max=None):       
         self.a_min = a_min if a_min is not None else -np.inf
         self.a_max = a_max if a_min is not None else np.inf
 
     def _load_data_and_label(self):
-        data, label = self._next_data()
+        data, label = self._next_data() #self._next_data() definition from children class
             
         train_data = self._process_data(data)
         labels = self._process_labels(label)
@@ -61,6 +61,7 @@ class BaseDataProvider(object):
             nx = label.shape[1]
             ny = label.shape[0]
             labels = np.zeros((ny, nx, self.n_class), dtype=np.float32)
+#            label_temp = np.ones((ny, nx), dtype=np.float32)
             labels[..., 1] = label
             labels[..., 0] = ~label
             return labels
@@ -68,7 +69,7 @@ class BaseDataProvider(object):
         return label
     
     def _process_data(self, data):
-        # normalization
+        # normalization   X-min/ (max-min)
 #        data = np.clip(np.fabs(data), self.a_min, self.a_max)
 #        data -= np.amin(data)
 #        data /= np.amax(data)
@@ -193,5 +194,4 @@ class ImageDataProvider(BaseDataProvider):
         
         img = self._load_file(image_name, np.float32)
         label = self._load_file(label_name, np.bool)
-    
         return img,label

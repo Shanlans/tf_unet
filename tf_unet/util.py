@@ -82,9 +82,12 @@ def crop_to_shape(data, shape):
     :param data: the array to crop
     :param shape: the target shape
     """
-    offset0 = (data.shape[1] - shape[1])//2
-    offset1 = (data.shape[2] - shape[2])//2
-    return data[:, offset0:(-offset0), offset1:(-offset1)]
+    if data.shape[1] != shape[1]:
+        offset0 = (data.shape[1] - shape[1])//2
+        offset1 = (data.shape[2] - shape[2])//2
+        return data[:, offset0:(-offset0), offset1:(-offset1)]
+    else:
+        return data
 
 def combine_img_prediction(data, gt, pred):
     """
