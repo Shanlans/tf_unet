@@ -58,3 +58,4 @@ docs/_build
 *.png
 *.jpg
 unet_trained
+*.bmp
